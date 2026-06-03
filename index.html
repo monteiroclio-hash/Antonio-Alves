@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acompanhamento de Faltas e Atividades</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .date-display {
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 16px;
+        }
+        .instruction {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .student-list {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .student-row {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+        .student-row:hover {
+            background-color: #f1f2f6;
+        }
+        .student-row:last-child {
+            border-bottom: none;
+        }
+        .student-number {
+            width: 35px;
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+        .student-name {
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-right: 15px;
+        }
+        .check-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="checkbox"] {
+            transform: scale(1.3);
+            cursor: pointer;
+            margin-bottom: 3px;
+        }
+        .chk-falta input[type="checkbox"]:checked {
+            accent-color: #e67e22;
+        }
+        .chk-status input[type="checkbox"]:checked {
+            accent-color: #e74c3c;
+        }
+        .output-section {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .output-section h2 {
+            font-size: 18px;
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>ACOMPANHAMENTO DE FALTAS E ATIVIDADES</h1>
+
+    <div class="header-info">
+        <div>
+            <label for="turma-select"><strong>Turma:</strong></label>
+            <select id="turma-select">
+                <option value="7º A" selected>7º A</option>
+                <option value="7º B">7º B</option>
+                <option value="8º A">8º A</option>
+                <option value="8º B">8º B</option>
+                <option value="9º A">9º A</option>
+                <option value="9º B">9º B</option>
+            </select>
+        </div>
+        <div class="date-display" id="data-display"></div>
+    </div>
+
+    <div class="instruction">MARQUE AS FALTAS E AS ATIVIDADES NÃO REALIZADAS</div>
+
+    <div class="student-list" id="student-list"></div>
+
+    <div class="output-section">
+        <h2>RELATÓRIO CONSOLIDADO</h2>
+        <textarea id="texto-faltas" readonly placeholder="O relatório consolidado aparecerá aqui automaticamente..."></textarea>
+        <button onclick="copiarRelacao()">COPIAR RELATÓRIO</button>
+    </div>
+
+    <script>
+        const turmas = {
+            "7º A": [
+                "ADRIELLY HELOISA DA SILVA MEDEIROS", "ANA CAROLINA DA SILVA SANTOS", "ANA VITORIA CAVALCANTE LUIS","ANA VITORIA NASCIMENTO PAULINO", "ANDERSON GABRIEL FARIAS DE FRANÇA", "APARECIDO MANOEL S. DOS SANTOS", "BERNARDO ALVES RICARDO GOMES", "DANIEL LINO DA SILVA", "DANIELLY HELOISA DA SILVA MEDEIROS", "DAYANE GOMES DE SOUZA", "ELLOISY LIRA CAVALCANTE", "EMANOELE GEOVANA DA R. OLIVEIRA", "FABIO MENEZES DE FRANÇA", "GABRIEL EVANGELISTA VASCONCELOS", "ÍTALA RIKELLY DOS SANTOS SANTANA", "JARDEL TENÓRIO DE SOUZA", "JOÃO LUCAS SANTOS FERRAZ", "JOSÉ GUILHERMY DE OLIVEIRA SANTOS", "JOSÉ WELLINTON R. DOS SANTOS", "LAURA MIKAELLA DA ROCHA SILVA", "LEANDRO LIOMAR DOS SANTOS FRANÇA", "MARIA ARIELE B. DA CONCEIÇÃO", "MARIA BEATRIZ RODRIGUES DA SILVA", "MARIA GABRIELA BEZERRA SANTOS", "MATHEUS DOS SANTOS SILVA", "MAYCON GUILHERME DOS S. MENESES", "NICOLE BEZERRA DA SILVA SANTOS", "RAI QUERINO DOS SANTOS", "REMILLY LETICYA NOGUEIRA DA SILVA", "SAMUEL PEDRO FERREIRA DOS SANTOS", "WALLACY ANTONIO SILVA DE MEDEIROS"
+            ],
+            "7º B": [
+                "ANTONY GABRIEL LIMA DOS SANTOS", "BERNARDO TORQUARTO MEDEIROS", "BRENO GABRIEL ALVES DE MOURA", "BRUNA AUGUSTA DA SILVA", "CARLOS GABRIEL CESAR FARIAS", "CARLOS HENRIQUE RODRIGUES SILVA SANTOS", "HYAGOR CLIVILAN VIEIRA MORAIS SANTOS", "ISABELLY VITÓRIA DE SOUZA", "JOÃO MIGUEL SOARES ALEXANDRE", "JOSÉ APARECIDO LEANDRO DOS SANTOS", "JOSÉ CÍCERO BARBOSA DOS SANTOS", "JOSÉ PABLO HENRIQUE SANTOS LIRA", "JOSÉ SAMUEL NUNES DOS SANTOS", "KAUAN KELVYN RODRIGUES DOS SANTOS", "KETHELLY VITÓRIA FERREIRA DOS SANTOS", "LAVINE LOHANY SILVA VITAL", "LUAN MACHADO DOS SANTOS", "MARIA APARECIDA DA SILVA", "MARIA CLARA DE OLIVEIRA SOUZA", "MARIA EDUARDA PEREIRA DA SILVA", "MARIA JAMILE DOS SANTOS FARIAS", "MARIA JOANA MARTINS DE FARIAS", "NÍCKOLAS GABRIEL DOS SANTOS SILVA", "PEDRO HENRIQUE DA SOILVA SANTOS", "RAFAEL DOS SANTOS", "SABRINA ALEXANDRE BARBOSA", "SOFIA GABRIELA FERREIRA DOS SANTOS", "THALLYS GABRIEL SOARES DE LIMA", "VIVIAN LARYSSA OLIVEIRA DOS SANTOS", "YASMIN VITÓRIA DA SILVA SANTOS"
+            ],
+            "8º A": [
+                "ANA CLARA DOS SANTOS FARIAS", "ANA JULIA GERMANO DOS SANTOS", "ARTHUR FERREIRA DA SILVA LIMA", "ARTHUR RUBENS DA SILVA", "EDUARDO BERNARDO DOS SANTOS", "FÁBIO MIGUEL DE FARIAS SATOS", "ISAC FERREIRA CAVALCANTE", "ISMAEL YURI TEIXIERA ARAÚJO", "IURI TENORIO MILITÃO", "JENIFFER WERYCA NUNES DOS SANTOS", "JENIFY ANJOS DOS SANTOS", "JONATHA DA SILVA SANTOS DOMINGOS", "JOSÉ PAULO DA SILVA SANTOS", "LUCAS CANDIDO SANTOS DA SILVA", "LUCAS VENICIUS BARBOSA DOS SANTOS", "MARIA JULIA DE ARAUJO SANTOS", "MARIA VITORIA DOS SANTOS", "NATHIELLY CRUS DOS SANTOS", "NICOLAS SANTOS", "NICOLE FERNANDA DA SILVA SANTANA", "RHYLBERTY KAUÃ CAVALCANTE ALVES", "RODRIGO BORGES DA SILVA", "RUAN DOS SANTOS BEZERRA", "RUAN GUILHERME DE MACEDO LIMA", "SAMUEL RUMMENING OLIVEIRA LIMA", "THASSILLA BEATRIZ BARBOSA DE ANDRADE", "VENICIUS DA SILVA SANTOS", "ANTONY KAUA SILVA DE LIMA (MAT.: 16/04)"
+            ],
+            "8º B": [
+                "ANA BEATRIZ DOS SANTOS ARAÚJO", "ANA JULIA ALVES DOS SANTOS", "ANDRIELLY KELLY PORFIRIO BRITO DOS SANTOS", "ANTONNY RAFEL CARDOSO DOS SANTOS", "CARLOS EDUARDO GONÇALVES SOUZA", "EDSON RAFAEL SILVA LIMA", "GABRIEL FARIAS DAMASCENO", "GENISON NUNES NETO", "HUGO VINICIUS DE OLIVEIRA SALES", "ISABELLE PATRICIA SILVA DE ASSIS", "JALWELY ZITA OLIVEIRA DA SILVA", "JOÃO GUILHERME RODRIGUES DOS SANTOS", "JOÃO PEDRO DA SILVA SANTOS", "JOÃO VICTOR DA SILVA SANTOS", "JOÃO VITOR BISPO DE FREITAS", "JOÃO VITOR DE SOUZA ARAÚJO", "JOSÉ RODRIGUES FELIX DA SILVA", "LAURA DE SOUZA NOBRE", "LUAN FIRMINO DE FARIAS", "LUIZ GUSTAVO CARDOSO EVANGELISTA", "LUIZA EMILLY FARIAS DOS SANTOS NUNES", "MAISA SANTOS DAMASCENO", "MARIA CLARA MACIEL BARBOSA", "MARIA LETICIA SILVA DOS SANTOS", "MARIA VITÓRIA SILVA DOS SANTOS", "MARIA YASMIN FLORENTINO DOS SILVA", "MICAELY ALEXANDRE SOARES DAMASCENO", "SARA LAVÍNIA DA SILVA SANTOS", "SOPHIA EMANUELLY DE LIMA", "WALACE MARTINS DOS SANTOS", "YCÁRO VINÍCIUS DE OLIVEIRA SILVA", "YURI PEREIRA DA SILVA"
+            ],
+            "9º A": [
+                "ALEKYS GABRIEL AIRES DA SILVA SIQUEIRA", "AMADEU VICTOR GOMES FARIAS DO NASCIMENTO", "ANTONY RAFAEL DOS SANTOS SILVA", "DEMISSON DA SILVA SOUZA", "DIEGO NUNES DOS SANTOS", "ELLOYSA PEREIRA ALMEIDA", "FÁBIO JÚNIOR CANUTO DOS SANTOS", "GUILHERME DA SILVA LIMA", "KAUANNE FERREIRA DA SILVA", "KETLLY SUELLEN ROZENDO BEZERRA", "LAIS GRAZIELLY PINHEIRO DOS SANTOS", "LUIZ FELIPE DASMACENO SANTOS", "LUIZ FERNANDO FERREIRA LIMA", "MANUEL EDUARDO SANTOS DA SILVA", "MARIA CAROLAINY DE MEDEIROS SILVA", "MARIA CLARA CARNEIRO DOS SANTOS", "MARIA EDJA RODRIGUES SANTOS", "MARIA EDUARDA SILVA BARBOSA", "MARIA LAURA OLIVEIRA DA SILVA", "NATTALLY EMANUELLY LUCAS DOS SANTOS", "RAMOEL ARTHUR JESUS SOUZA", "SAMYLLA LÚCIA DA SILVA COSTA", "SANDRO ALFREDO SANTOS DA SILVA JUNIOR", "STEFAFFANY FERREIRA DE LIRA", "VANIELLY SANTOS SILVA"
+            ],
+            "9º B": [
+                "ADRIELLY VITÓRIA SIMPLÍCIO DOS SANTOS", "ADRYAN RAPHAEL TEIXEIRA DE OLIVEIRA", "ALICE VALENTINA PAULINO DE LIMA", "ANDERSON PORFIRIO BRITO DOS SANTOS", "APARECIDA MIKAELLY SOARES OLIVEIRA", "EVILIN VITORIA LEANDRO DOS SANTOS", "FABRICIA MENEZES DE FRANÇA", "GABRIELLY FERREIRA DE LIMA", "HENRIQUE RODRIGUES DOS SANTOS", "JOÃO VITOR SANTOS LIRA", "JOSÉ EDSON DE SOUZA SILVA", "JOSÉ VENICIUS MARINHO DE SANTANA", "JUAN CARLOS BASILIO BARBOSA", "LUAN MARCOS LÚCIO DOS SANTOS", "MARIA EDUARDA DIAS DOS SANTOS", "MARIA EDUARDA SANTOS SILVA", "MILIARY DA HORA SILVA (CANCELADA 14/04)", "PEDRO LUCAS DE OLIVEIRA COSTA", "THALLYSSON GABRIEL SANTOS LIRA", "THAYLA FERNANDA DAMASCENO SILVA", "TIAGO GUILHERME DA SILVA FILHO (TR.: 30/03)", "YCARO FELIPE GALDINO DOS SANTOS"
+            ]
+        };
+
+        function configurarData() {
+            const diasSemana = ['DOMINGO', 'SEGUNDA-FEIRA', 'TERÇA-FEIRA', 'QUARTA-FEIRA', 'QUINTA-FEIRA', 'SEXTA-FEIRA', 'SÁBADO'];
+            const dataAtual = new Date();
+            const diaSemana = diasSemana[dataAtual.getDay()];
+            const dataFormatada = dataAtual.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('data-display').innerText = `${diaSemana} - ${dataFormatada}`;
+        }
+
+        let turmaAtual = "7º A";
+        let faltosos = [];
+        let naoRealizados = [];
+
+        configurarData();
+        renderizarListaAlunos();
+        atualizarCaixaTexto();
+
+        document.getElementById('turma-select').addEventListener('change', function() {
+            turmaAtual = this.value;
+            faltosos = []; 
+            naoRealizados = [];
+            renderizarListaAlunos();
+            atualizarCaixaTexto();
+        });
+
+        function renderizarListaAlunos() {
+            const container = document.getElementById('student-list');
+            container.innerHTML = ''; 
+
+            if (!turmaAtual) return;
+
+            const alunos = turmas[turmaAtual];
+
+            alunos.forEach((aluno, index) => {
+                const row = document.createElement('div');
+                row.className = 'student-row';
+
+                const checkboxContainer = document.createElement('div');
+                checkboxContainer.className = 'checkbox-container';
+
+                // Checkbox de Falta
+                const groupFalta = document.createElement('div');
+                groupFalta.className = 'check-group chk-falta';
+                const labelFalta = document.createElement('span');
+                labelFalta.innerText = "FALTA";
+                const chkFalta = document.createElement('input');
+                chkFalta.type = 'checkbox';
+                chkFalta.id = `falta-${index}`;
+                chkFalta.onchange = function(e) {
+                    atualizarListas(aluno, index, e.target.checked, 'falta');
+                };
+                groupFalta.appendChild(chkFalta);
+                groupFalta.appendChild(labelFalta);
+
+                // Checkbox de Atividade Não Realizada
+                const groupStatus = document.createElement('div');
+                groupStatus.className = 'check-group chk-status';
+                const labelStatus = document.createElement('span');
+                labelStatus.innerText = "N/ REALIZOU";
+                const chkStatus = document.createElement('input');
+                chkStatus.type = 'checkbox';
+                chkStatus.id = `status-${index}`;
+                chkStatus.onchange = function(e) {
+                    atualizarListas(aluno, index, e.target.checked, 'status');
+                };
+                groupStatus.appendChild(chkStatus);
+                groupStatus.appendChild(labelStatus);
+
+                checkboxContainer.appendChild(groupFalta);
+                checkboxContainer.appendChild(groupStatus);
+
+                const numeroDiv = document.createElement('div');
+                numeroDiv.className = 'student-number';
+                numeroDiv.innerText = (index + 1).toString().padStart(2, '0');
+
+                const nomeDiv = document.createElement('div');
+                nomeDiv.className = 'student-name';
+                nomeDiv.innerText = aluno;
+
+                row.appendChild(checkboxContainer);
+                row.appendChild(numeroDiv);
+                row.appendChild(nomeDiv);
+                
+                container.appendChild(row);
+            });
+        }
+
+        function atualizarListas(nome, index, isChecked, tipo) {
+            if (tipo === 'falta') {
+                if (isChecked) {
+                    faltosos.push({ numero: index + 1, nome: nome });
+                } else {
+                    faltosos = faltosos.filter(f => f.nome !== nome);
+                }
+                faltosos.sort((a, b) => a.numero - b.numero);
+            } else if (tipo === 'status') {
+                if (isChecked) {
+                    naoRealizados.push({ numero: index + 1, nome: nome });
+                } else {
+                    naoRealizados = naoRealizados.filter(n => n.nome !== nome);
+                }
+                naoRealizados.sort((a, b) => a.numero - b.numero);
+            }
+            atualizarCaixaTexto();
+        }
+
+        function atualizarCaixaTexto() {
+            const textarea = document.getElementById('texto-faltas');
+            if (!turmaAtual) {
+                textarea.value = "";
+                return;
+            }
+
+            const dataHoje = document.getElementById('data-display').innerText;
+
+            let texto = `ACOMPANHAMENTO DIÁRIO\n`;
+            texto += `${turmaAtual} - ${dataHoje}\n`;
+            texto += `-------------------------------------------\n\n`;
+
+            // Bloco de Alunos Faltosos
+            texto += `RELAÇÃO DE FALTOSOS:\n`;
+            if (faltosos.length === 0) {
+                texto += `Nenhuma falta registrada.\n`;
+            } else {
+                faltosos.forEach(f => {
+                    texto += `${f.numero.toString().padStart(2, '0')} - ${f.nome}\n`;
+                });
+            }
+            texto += `Total de Faltosos: ${faltosos.length}\n`;
+            texto += `-------------------------------------------\n\n`;
+
+            // Bloco de Atividades Não Realizadas
+            texto += `ATIVIDADE NÃO REALIZADA:\n`;
+            if (naoRealizados.length === 0) {
+                texto += `Todos os alunos presentes realizaram a atividade.\n`;
+            } else {
+                naoRealizados.forEach(n => {
+                    texto += `${n.numero.toString().padStart(2, '0')} - ${n.nome}\n`;
+                });
+            }
+            texto += `Total Não Realizaram: ${naoRealizados.length}\n`;
+
+            textarea.value = texto;
+        }
+
+        async function copiarRelacao() {
+            const textarea = document.getElementById("texto-faltas");
+            
+            if (!textarea.value || textarea.value.trim() === "") {
+                alert("Não há dados para copiar.");
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(textarea.value);
+                alert("Relatório copiado com sucesso!");
+            } catch (err) {
+                textarea.select();
+                textarea.setSelectionRange(0, 99999); 
+                try {
+                    document.execCommand("copy");
+                    alert("Relatório copiado com sucesso!");
+                } catch (fallbackErr) {
+                    alert("Erro ao copiar o texto. Tente selecionar e copiar manualmente.");
+                }
+                window.getSelection().removeAllRanges();
+            }
+        }
+    </script>
+
+</body>
+</html>
