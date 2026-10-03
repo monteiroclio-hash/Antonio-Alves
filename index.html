@@ -5,41 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acompanhamento de Faltas e Atividades</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f7f6;
             color: #333;
             max-width: 850px;
             margin: 0 auto;
             padding: 20px;
         }
+
         h1 {
             text-align: center;
             color: #2c3e50;
-            border-bottom: 2px solid #3498db;
+            border-bottom: 3px solid #3498db;
             padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
+        /* Navegação por Abas */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background-color: #bdc3c7;
+            color: #2c3e50;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .tab-btn:hover {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .tab-btn.active {
+            background-color: #3498db;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
         .header-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
             margin-bottom: 20px;
             background: #fff;
-            padding: 15px;
+            padding: 15px 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
         }
-        select {
-            padding: 10px;
-            font-size: 16px;
+
+        select, input[type="month"] {
+            padding: 8px 12px;
+            font-size: 15px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            outline: none;
+            background-color: #fff;
+            cursor: pointer;
         }
+
+        select:focus, input[type="month"]:focus {
+            border-color: #3498db;
+        }
+
         .date-display {
             font-weight: bold;
             color: #e74c3c;
-            font-size: 16px;
+            font-size: 15px;
         }
+
         .instruction {
             background-color: #3498db;
             color: white;
@@ -48,44 +102,44 @@
             font-weight: bold;
             border-radius: 5px;
             margin-bottom: 15px;
+            font-size: 13px;
+            letter-spacing: 0.5px;
         }
+
+        /* Lista de Estudantes */
         .student-list {
             background: #fff;
-            padding: 15px;
+            padding: 10px 15px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            max-height: 400px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            max-height: 420px;
             overflow-y: auto;
             margin-bottom: 20px;
         }
+
         .student-row {
             display: flex;
             align-items: center;
-            padding: 10px;
+            padding: 8px 5px;
             border-bottom: 1px solid #eee;
             transition: background-color 0.2s;
         }
+
         .student-row:hover {
-            background-color: #f1f2f6;
+            background-color: #f8f9fa;
         }
+
         .student-row:last-child {
             border-bottom: none;
         }
-        .student-number {
-            width: 35px;
-            font-weight: bold;
-            color: #7f8c8d;
-        }
-        .student-name {
-            flex-grow: 1;
-            margin-left: 10px;
-        }
+
         .checkbox-container {
             display: flex;
             align-items: center;
             gap: 15px;
             margin-right: 15px;
         }
+
         .check-group {
             display: flex;
             flex-direction: column;
@@ -93,56 +147,171 @@
             font-size: 10px;
             font-weight: bold;
             color: #555;
+            cursor: pointer;
         }
+
+        .check-group label {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         input[type="checkbox"] {
             transform: scale(1.3);
             cursor: pointer;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
+
         .chk-falta input[type="checkbox"]:checked {
             accent-color: #e67e22;
         }
+
         .chk-status input[type="checkbox"]:checked {
             accent-color: #e74c3c;
         }
+
+        .student-number {
+            width: 30px;
+            font-weight: bold;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .student-name {
+            flex-grow: 1;
+            margin-left: 5px;
+            font-weight: 500;
+            font-size: 14px;
+            word-break: break-word;
+        }
+
+        /* Área de Relatório e Saída */
         .output-section {
             background: #fff;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
         }
+
         .output-section h2 {
-            font-size: 18px;
+            font-size: 16px;
             margin-top: 0;
+            margin-bottom: 10px;
             color: #2c3e50;
+            text-transform: uppercase;
         }
+
         textarea {
             width: 100%;
-            height: 250px;
-            padding: 10px;
-            font-family: monospace;
-            font-size: 14px;
+            height: 230px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
             border: 1px solid #ccc;
             border-radius: 5px;
             resize: vertical;
-            box-sizing: border-box;
+            background-color: #fdfdfd;
+            color: #2c3e50;
+            line-height: 1.4;
         }
+
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        /* Grupo de Botões */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
         button {
-            display: block;
-            width: 100%;
+            flex: 1;
+            min-width: 180px;
             padding: 12px;
             background-color: #27ae60;
             color: white;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, transform 0.1s;
         }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
         button:hover {
             background-color: #2ecc71;
+        }
+
+        .btn-secondary {
+            background-color: #2980b9;
+        }
+
+        .btn-secondary:hover {
+            background-color: #3498db;
+        }
+
+        .btn-email {
+            background-color: #8e44ad;
+        }
+
+        .btn-email:hover {
+            background-color: #9b59b6;
+        }
+
+        /* Notificação Toast */
+        #toast {
+            visibility: hidden;
+            min-width: 280px;
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 14px 20px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.4s, fadeout 0.4s 2.6s;
+        }
+
+        @keyframes fadein {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+
+        @keyframes fadeout {
+            from { bottom: 30px; opacity: 1; }
+            to { bottom: 0; opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .header-info {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            button {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -150,35 +319,82 @@
 
     <h1>ACOMPANHAMENTO DE FALTAS E ATIVIDADES</h1>
 
-    <div class="header-info">
-        <div>
-            <label for="turma-select"><strong>Turma:</strong></label>
-            <select id="turma-select">
-                <option value="7º A" selected>7º A</option>
-                <option value="7º B">7º B</option>
-                <option value="8º A">8º A</option>
-                <option value="8º B">8º B</option>
-                <option value="9º A">9º A</option>
-                <option value="9º B">9º B</option>
-            </select>
+    <!-- Abas de Navegação -->
+    <div class="nav-tabs">
+        <button type="button" class="tab-btn active" onclick="trocarAba('diario')">CHAMADA DIÁRIA</button>
+        <button type="button" class="tab-btn" onclick="trocarAba('mensal')">RELATÓRIO MENSAL DE FALTAS</button>
+    </div>
+
+    <!-- PAINEL DIÁRIO -->
+    <div id="painel-diario">
+        <div class="header-info">
+            <div>
+                <label for="turma-select"><strong>Turma:</strong></label>
+                <select id="turma-select">
+                    <option value="7º A" selected>7º A</option>
+                    <option value="7º B">7º B</option>
+                    <option value="8º A">8º A</option>
+                    <option value="8º B">8º B</option>
+                </select>
+            </div>
+            <div class="date-display" id="data-display"></div>
         </div>
-        <div class="date-display" id="data-display"></div>
+
+        <div class="instruction">MARQUE AS FALTAS E AS ATIVIDADES NÃO REALIZADAS DO DIA</div>
+
+        <div class="student-list" id="student-list"></div>
+
+        <div class="output-section">
+            <h2>RELATÓRIO CONSOLIDADO DO DIA</h2>
+            <textarea id="texto-faltas" readonly placeholder="O relatório consolidado aparecerá aqui automaticamente..."></textarea>
+            
+            <div class="btn-group">
+                <button type="button" class="btn-secondary" onclick="salvarRegistroDiario()">SALVAR REGISTRO DE HOJE</button>
+                <button type="button" onclick="copiarRelacao()">COPIAR RELATÓRIO</button>
+            </div>
+        </div>
     </div>
 
-    <div class="instruction">MARQUE AS FALTAS E AS ATIVIDADES NÃO REALIZADAS</div>
+    <!-- PAINEL MENSAL -->
+    <div id="painel-mensal" style="display: none;">
+        <div class="header-info">
+            <div>
+                <label for="turma-select-mensal"><strong>Turma:</strong></label>
+                <select id="turma-select-mensal" onchange="gerarRelatorioMensal()">
+                    <option value="7º A" selected>7º A</option>
+                    <option value="7º B">7º B</option>
+                    <option value="8º A">8º A</option>
+                    <option value="8º B">8º B</option>
+                </select>
+            </div>
+            <div>
+                <label for="mes-select"><strong>Mês/Ano:</strong></label>
+                <input type="month" id="mes-select" onchange="gerarRelatorioMensal()">
+            </div>
+        </div>
 
-    <div class="student-list" id="student-list"></div>
-
-    <div class="output-section">
-        <h2>RELATÓRIO CONSOLIDADO</h2>
-        <textarea id="texto-faltas" readonly placeholder="O relatório consolidado aparecerá aqui automaticamente..."></textarea>
-        <button onclick="copiarRelacao()">COPIAR RELATÓRIO</button>
+        <div class="output-section">
+            <h2>RELATÓRIO MENSAL DETALHADO POR ESTUDANTE</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 12px; margin-top: 0;">
+                Mapeamento das faltas e atividades não realizadas com as respetivas datas registradas.
+            </p>
+            <textarea id="texto-mensal" readonly placeholder="Selecione o mês para gerar o relatório..."></textarea>
+            
+            <div class="btn-group">
+                <button type="button" onclick="copiarRelatorioMensal()">COPIAR RELATÓRIO MENSAL</button>
+                <button type="button" class="btn-email" onclick="enviarPorEmail()">ENVIAR POR E-MAIL</button>
+            </div>
+        </div>
     </div>
+
+    <div id="toast"></div>
 
     <script>
+        const EMAIL_DESTINO = "monteiro.clio@gmail.com";
+
         const turmas = {
             "7º A": [
-                "ADRIELLY HELOISA DA SILVA MEDEIROS", "ANA CAROLINA DA SILVA SANTOS", "ANA VITORIA CAVALCANTE LUIS","ANA VITORIA NASCIMENTO PAULINO", "ANDERSON GABRIEL FARIAS DE FRANÇA", "APARECIDO MANOEL S. DOS SANTOS", "BERNARDO ALVES RICARDO GOMES", "DANIEL LINO DA SILVA", "DANIELLY HELOISA DA SILVA MEDEIROS", "DAYANE GOMES DE SOUZA", "ELLOISY LIRA CAVALCANTE", "EMANOELE GEOVANA DA R. OLIVEIRA", "FABIO MENEZES DE FRANÇA", "GABRIEL EVANGELISTA VASCONCELOS", "GRAÇA ARIELY DOS SANTOS LIMA", "ÍTALA RIKELLY DOS SANTOS SANTANA", "JARDEL TENÓRIO DE SOUZA", "JOÃO LUCAS SANTOS FERRAZ", "JOSÉ GUILHERMY DE OLIVEIRA SANTOS", "JOSÉ WELLINTON R. DOS SANTOS", "LAURA MIKAELLA DA ROCHA SILVA", "LEANDRO LIOMAR DOS SANTOS FRANÇA", "MARIA ARIELE B. DA CONCEIÇÃO", "MARIA BEATRIZ RODRIGUES DA SILVA", "MARIA GABRIELA BEZERRA SANTOS", "MATHEUS DOS SANTOS SILVA", "MAYCON GUILHERME DOS S. MENESES", "NICOLE BEZERRA DA SILVA SANTOS", "RAI QUERINO DOS SANTOS", "REMILLY LETICYA NOGUEIRA DA SILVA", "SAMUEL PEDRO FERREIRA DOS SANTOS", "WALLACY ANTONIO SILVA DE MEDEIROS"
+                "ADRIELLY HELOISA DA SILVA MEDEIROS", "ANA CAROLINA DA SILVA SANTOS", "ANA VITORIA CAVALCANTE LUIS", "ANA VITORIA NASCIMENTO PAULINO", "ANDERSON GABRIEL FARIAS DE FRANÇA", "APARECIDO MANOEL S. DOS SANTOS", "BERNARDO ALVES RICARDO GOMES", "DANIEL LINO DA SILVA", "DANIELLY HELOISA DA SILVA MEDEIROS", "DAYANE GOMES DE SOUZA", "ELLOISY LIRA CAVALCANTE", "EMANOELE GEOVANA DA R. OLIVEIRA", "FABIO MENEZES DE FRANÇA", "GABRIEL EVANGELISTA VASCONCELOS", "GRAÇA ARIELY DOS SANTOS LIMA", "ÍTALA RIKELLY DOS SANTOS SANTANA", "JARDEL TENÓRIO DE SOUZA", "JOÃO LUCAS SANTOS FERRAZ", "JOSÉ GUILHERMY DE OLIVEIRA SANTOS", "JOSÉ WELLINTON R. DOS SANTOS", "LAURA MIKAELLA DA ROCHA SILVA", "LEANDRO LIOMAR DOS SANTOS FRANÇA", "MARIA ARIELE B. DA CONCEIÇÃO", "MARIA BEATRIZ RODRIGUES DA SILVA", "MARIA GABRIELA BEZERRA SANTOS", "MATHEUS DOS SANTOS SILVA", "MAYCON GUILHERME DOS S. MENESES", "NICOLE BEZERRA DA SILVA SANTOS", "RAI QUERINO DOS SANTOS", "REMILLY LETICYA NOGUEIRA DA SILVA", "SAMUEL PEDRO FERREIRA DOS SANTOS", "WALLACY ANTONIO SILVA DE MEDEIROS"
             ],
             "7º B": [
                 "ANTONY GABRIEL LIMA DOS SANTOS", "BERNARDO TORQUARTO MEDEIROS", "BRENO GABRIEL ALVES DE MOURA", "BRUNA AUGUSTA DA SILVA", "CARLOS GABRIEL CESAR FARIAS", "CARLOS HENRIQUE RODRIGUES SILVA SANTOS", "HYAGOR CLIVILAN VIEIRA MORAIS SANTOS", "ISABELLY VITÓRIA DE SOUZA", "JOÃO MIGUEL SOARES ALEXANDRE", "JOSÉ APARECIDO LEANDRO DOS SANTOS", "JOSÉ CÍCERO BARBOSA DOS SANTOS", "JOSÉ PABLO HENRIQUE SANTOS LIRA", "JOSÉ SAMUEL NUNES DOS SANTOS", "KAUAN KELVYN RODRIGUES DOS SANTOS", "KETHELLY VITÓRIA FERREIRA DOS SANTOS", "LAVINE LOHANY SILVA VITAL", "LUAN MACHADO DOS SANTOS", "MARIA APARECIDA DA SILVA", "MARIA CLARA DE OLIVEIRA SOUZA", "MARIA EDUARDA PEREIRA DA SILVA", "MARIA JAMILE DOS SANTOS FARIAS", "MARIA JOANA MARTINS DE FARIAS", "NÍCKOLAS GABRIEL DOS SANTOS SILVA", "PEDRO HENRIQUE DA SOILVA SANTOS", "RAFAEL DOS SANTOS", "SABRINA ALEXANDRE BARBOSA", "SOFIA GABRIELA FERREIRA DOS SANTOS", "THALLYS GABRIEL SOARES DE LIMA", "VIVIAN LARYSSA OLIVEIRA DOS SANTOS", "YASMIN VITÓRIA DA SILVA SANTOS", "MARIA EDUARDA ANTÔNIA DA SILVA"
@@ -188,14 +404,12 @@
             ],
             "8º B": [
                 "ANA BEATRIZ DOS SANTOS ARAÚJO", "ANA JULIA ALVES DOS SANTOS", "ANDRIELLY KELLY PORFIRIO BRITO DOS SANTOS", "ANTONNY RAFEL CARDOSO DOS SANTOS", "CARLOS EDUARDO GONÇALVES SOUZA", "EDSON RAFAEL SILVA LIMA", "GABRIEL FARIAS DAMASCENO", "GENISON NUNES NETO", "HUGO VINICIUS DE OLIVEIRA SALES", "ISABELLE PATRICIA SILVA DE ASSIS", "JALWELY ZITA OLIVEIRA DA SILVA", "JOÃO GUILHERME RODRIGUES DOS SANTOS", "JOÃO PEDRO DA SILVA SANTOS", "JOÃO VICTOR DA SILVA SANTOS", "JOÃO VITOR BISPO DE FREITAS", "JOÃO VITOR DE SOUZA ARAÚJO", "JOSÉ RODRIGUES FELIX DA SILVA", "LAURA DE SOUZA NOBRE", "LUAN FIRMINO DE FARIAS", "LUIZ GUSTAVO CARDOSO EVANGELISTA", "LUIZA EMILLY FARIAS DOS SANTOS NUNES", "MAISA SANTOS DAMASCENO", "MARIA CLARA MACIEL BARBOSA", "MARIA LETICIA SILVA DOS SANTOS", "MARIA VITÓRIA SILVA DOS SANTOS", "MARIA YASMIN FLORENTINO DOS SILVA", "MICAELY ALEXANDRE SOARES DAMASCENO", "SARA LAVÍNIA DA SILVA SANTOS", "SOPHIA EMANUELLY DE LIMA", "WALACE MARTINS DOS SANTOS", "YCÁRO VINÍCIUS DE OLIVEIRA SILVA", "YURI PEREIRA DA SILVA"
-            ],
-            "9º A": [
-                "ALEKYS GABRIEL AIRES DA SILVA SIQUEIRA", "AMADEU VICTOR GOMES FARIAS DO NASCIMENTO", "ANTONY RAFAEL DOS SANTOS SILVA", "DEMISSON DA SILVA SOUZA", "DIEGO NUNES DOS SANTOS", "ELLOYSA PEREIRA ALMEIDA", "FÁBIO JÚNIOR CANUTO DOS SANTOS", "GUILHERME DA SILVA LIMA", "KAUANNE FERREIRA DA SILVA", "KETLLY SUELLEN ROZENDO BEZERRA", "LAIS GRAZIELLY PINHEIRO DOS SANTOS", "LUIZ FELIPE DASMACENO SANTOS", "LUIZ FERNANDO FERREIRA LIMA", "MANUEL EDUARDO SANTOS DA SILVA", "MARIA CAROLAINY DE MEDEIROS SILVA", "MARIA CLARA CARNEIRO DOS SANTOS", "MARIA EDJA RODRIGUES SANTOS", "MARIA EDUARDA SILVA BARBOSA", "MARIA LAURA OLIVEIRA DA SILVA", "NATTALLY EMANUELLY LUCAS DOS SANTOS", "RAMOEL ARTHUR JESUS SOUZA", "SAMYLLA LÚCIA DA SILVA COSTA", "SANDRO ALFREDO SANTOS DA SILVA JUNIOR", "STEFAFFANY FERREIRA DE LIRA", "VANIELLY SANTOS SILVA"
-            ],
-            "9º B": [
-                "ADRIELLY VITÓRIA SIMPLÍCIO DOS SANTOS", "ADRYAN RAPHAEL TEIXEIRA DE OLIVEIRA", "ALICE VALENTINA PAULINO DE LIMA", "ANDERSON PORFIRIO BRITO DOS SANTOS", "APARECIDA MIKAELLY SOARES OLIVEIRA", "EVILIN VITORIA LEANDRO DOS SANTOS", "FABRICIA MENEZES DE FRANÇA", "GABRIELLY FERREIRA DE LIMA", "HENRIQUE RODRIGUES DOS SANTOS", "JOÃO VITOR SANTOS LIRA", "JOSÉ EDSON DE SOUZA SILVA", "JOSÉ VENICIUS MARINHO DE SANTANA", "JUAN CARLOS BASILIO BARBOSA", "LUAN MARCOS LÚCIO DOS SANTOS", "MARIA EDUARDA DIAS DOS SANTOS", "MARIA EDUARDA SANTOS SILVA", "MILIARY DA HORA SILVA (CANCELADA 14/04)", "PEDRO LUCAS DE OLIVEIRA COSTA", "THALLYSSON GABRIEL SANTOS LIRA", "THAYLA FERNANDA DAMASCENO SILVA", "TIAGO GUILHERME DA SILVA FILHO (TR.: 30/03)", "YCARO FELIPE GALDINO DOS SANTOS"
             ]
         };
+
+        let turmaAtual = "7º A";
+        let faltosos = [];
+        let naoRealizados = [];
 
         function configurarData() {
             const diasSemana = ['DOMINGO', 'SEGUNDA-FEIRA', 'TERÇA-FEIRA', 'QUARTA-FEIRA', 'QUINTA-FEIRA', 'SEXTA-FEIRA', 'SÁBADO'];
@@ -203,11 +417,12 @@
             const diaSemana = diasSemana[dataAtual.getDay()];
             const dataFormatada = dataAtual.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
             document.getElementById('data-display').innerText = `${diaSemana} - ${dataFormatada}`;
-        }
 
-        let turmaAtual = "7º A";
-        let faltosos = [];
-        let naoRealizados = [];
+            // Define o mês atual padrão no campo de seleção mensal
+            const ano = dataAtual.getFullYear();
+            const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+            document.getElementById('mes-select').value = `${ano}-${mes}`;
+        }
 
         configurarData();
         renderizarListaAlunos();
@@ -215,15 +430,34 @@
 
         document.getElementById('turma-select').addEventListener('change', function() {
             turmaAtual = this.value;
-            faltosos = []; 
+            faltosos = [];
             naoRealizados = [];
             renderizarListaAlunos();
             atualizarCaixaTexto();
         });
 
+        function trocarAba(aba) {
+            const painelDiario = document.getElementById('painel-diario');
+            const painelMensal = document.getElementById('painel-mensal');
+            const btns = document.querySelectorAll('.tab-btn');
+
+            if (aba === 'diario') {
+                painelDiario.style.display = 'block';
+                painelMensal.style.display = 'none';
+                btns[0].classList.add('active');
+                btns[1].classList.remove('active');
+            } else {
+                painelDiario.style.display = 'none';
+                painelMensal.style.display = 'block';
+                btns[0].classList.remove('active');
+                btns[1].classList.add('active');
+                gerarRelatorioMensal();
+            }
+        }
+
         function renderizarListaAlunos() {
             const container = document.getElementById('student-list');
-            container.innerHTML = ''; 
+            container.innerHTML = '';
 
             if (!turmaAtual) return;
 
@@ -239,29 +473,46 @@
                 // Checkbox de Falta
                 const groupFalta = document.createElement('div');
                 groupFalta.className = 'check-group chk-falta';
-                const labelFalta = document.createElement('span');
-                labelFalta.innerText = "FALTA";
+                
                 const chkFalta = document.createElement('input');
                 chkFalta.type = 'checkbox';
                 chkFalta.id = `falta-${index}`;
-                chkFalta.onchange = function(e) {
-                    atualizarListas(aluno, index, e.target.checked, 'falta');
-                };
-                groupFalta.appendChild(chkFalta);
-                groupFalta.appendChild(labelFalta);
+
+                const labelFalta = document.createElement('label');
+                labelFalta.htmlFor = `falta-${index}`;
+                labelFalta.appendChild(chkFalta);
+                labelFalta.appendChild(document.createTextNode("FALTA"));
 
                 // Checkbox de Atividade Não Realizada
                 const groupStatus = document.createElement('div');
                 groupStatus.className = 'check-group chk-status';
-                const labelStatus = document.createElement('span');
-                labelStatus.innerText = "N/ REALIZOU";
+
                 const chkStatus = document.createElement('input');
                 chkStatus.type = 'checkbox';
                 chkStatus.id = `status-${index}`;
+
+                const labelStatus = document.createElement('label');
+                labelStatus.htmlFor = `status-${index}`;
+                labelStatus.appendChild(chkStatus);
+                labelStatus.appendChild(document.createTextNode("N/ REALIZOU"));
+
+                // Regra mútua ao alternar faltas
+                chkFalta.onchange = function(e) {
+                    if (e.target.checked) {
+                        chkStatus.checked = false;
+                        chkStatus.disabled = true;
+                        atualizarListas(aluno, index, false, 'status');
+                    } else {
+                        chkStatus.disabled = false;
+                    }
+                    atualizarListas(aluno, index, e.target.checked, 'falta');
+                };
+
                 chkStatus.onchange = function(e) {
                     atualizarListas(aluno, index, e.target.checked, 'status');
                 };
-                groupStatus.appendChild(chkStatus);
+
+                groupFalta.appendChild(labelFalta);
                 groupStatus.appendChild(labelStatus);
 
                 checkboxContainer.appendChild(groupFalta);
@@ -278,7 +529,7 @@
                 row.appendChild(checkboxContainer);
                 row.appendChild(numeroDiv);
                 row.appendChild(nomeDiv);
-                
+
                 container.appendChild(row);
             });
         }
@@ -315,7 +566,6 @@
             texto += `${turmaAtual} - ${dataHoje}\n`;
             texto += `-------------------------------------------\n\n`;
 
-            // Bloco de Alunos Faltosos
             texto += `RELAÇÃO DE FALTOSOS:\n`;
             if (faltosos.length === 0) {
                 texto += `Nenhuma falta registrada.\n`;
@@ -327,7 +577,6 @@
             texto += `Total de Faltosos: ${faltosos.length}\n`;
             texto += `-------------------------------------------\n\n`;
 
-            // Bloco de Atividades Não Realizadas
             texto += `ATIVIDADE NÃO REALIZADA:\n`;
             if (naoRealizados.length === 0) {
                 texto += `Todos os alunos presentes realizaram a atividade.\n`;
@@ -341,30 +590,168 @@
             textarea.value = texto;
         }
 
-        async function copiarRelacao() {
-            const textarea = document.getElementById("texto-faltas");
+        /* SISTEMA DE ARMAZENAMENTO LOCAL */
+        function salvarRegistroDiario() {
+            const dataHoje = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            const chave = `registro_${turmaAtual}_${dataHoje}`;
             
-            if (!textarea.value || textarea.value.trim() === "") {
-                alert("Não há dados para copiar.");
+            const dadosHoje = {
+                turma: turmaAtual,
+                data: dataHoje,
+                faltosos: faltosos,
+                naoRealizados: naoRealizados
+            };
+
+            localStorage.setItem(chave, JSON.stringify(dadosHoje));
+            mostrarToast(`Registro do dia (${dataHoje.split('-').reverse().join('/')}) salvo com sucesso!`);
+        }
+
+        /* GERADOR DE RELATÓRIO MENSAL POR ESTUDANTE */
+        function gerarRelatorioMensal() {
+            const turmaSelect = document.getElementById('turma-select-mensal').value;
+            const mesSelect = document.getElementById('mes-select').value; // Formato YYYY-MM
+            const textareaMensal = document.getElementById('texto-mensal');
+
+            if (!mesSelect) {
+                textareaMensal.value = "Por favor, selecione um mês de referência.";
                 return;
             }
 
-            try {
-                await navigator.clipboard.writeText(textarea.value);
-                alert("Relatório copiado com sucesso!");
-            } catch (err) {
-                textarea.select();
-                textarea.setSelectionRange(0, 99999); 
-                try {
-                    document.execCommand("copy");
-                    alert("Relatório copiado com sucesso!");
-                } catch (fallbackErr) {
-                    alert("Erro ao copiar o texto. Tente selecionar e copiar manualmente.");
+            const [ano, mes] = mesSelect.split('-');
+            const alunos = turmas[turmaSelect];
+            
+            // Dicionário por aluno
+            let relatorioAlunos = {};
+            alunos.forEach((aluno, index) => {
+                relatorioAlunos[aluno] = {
+                    numero: (index + 1).toString().padStart(2, '0'),
+                    faltas: [],
+                    naoRealizou: []
+                };
+            });
+
+            // Percorre todas as chaves salvas no localStorage
+            for (let i = 0; i < localStorage.length; i++) {
+                const chave = localStorage.key(i);
+                if (chave.startsWith(`registro_${turmaSelect}_${ano}-${mes}`)) {
+                    try {
+                        const registro = JSON.parse(localStorage.getItem(chave));
+                        const diaData = registro.data.split('-')[2]; // DD
+
+                        registro.faltosos.forEach(f => {
+                            if (relatorioAlunos[f.nome] && !relatorioAlunos[f.nome].faltas.includes(diaData)) {
+                                relatorioAlunos[f.nome].faltas.push(diaData);
+                            }
+                        });
+
+                        registro.naoRealizados.forEach(n => {
+                            if (relatorioAlunos[n.nome] && !relatorioAlunos[n.nome].naoRealizou.includes(diaData)) {
+                                relatorioAlunos[n.nome].naoRealizou.push(diaData);
+                            }
+                        });
+                    } catch(e) {}
                 }
-                window.getSelection().removeAllRanges();
+            }
+
+            // Formatação do texto
+            const nomesMeses = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+            const nomeMesExtenso = nomesMeses[parseInt(mes, 10) - 1];
+
+            let texto = `RELATÓRIO MENSAL DE ACOMPANHAMENTO\n`;
+            texto += `TURMA: ${turmaSelect} - MÊS: ${nomeMesExtenso}/${ano}\n`;
+            texto += `===========================================\n\n`;
+
+            let contadorOcorrencias = 0;
+
+            alunos.forEach(aluno => {
+                const dados = relatorioAlunos[aluno];
+                
+                // Ordenação cronológica dos dias
+                dados.faltas.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+                dados.naoRealizou.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+
+                if (dados.faltas.length > 0 || dados.naoRealizou.length > 0) {
+                    contadorOcorrencias++;
+                    texto += `${dados.numero} - ${aluno}\n`;
+                    if (dados.faltas.length > 0) {
+                        texto += `   • Faltas (Dias): ${dados.faltas.join(', ')} (Total: ${dados.faltas.length})\n`;
+                    }
+                    if (dados.naoRealizou.length > 0) {
+                        texto += `   • Atividade Não Realizada (Dias): ${dados.naoRealizou.join(', ')} (Total: ${dados.naoRealizou.length})\n`;
+                    }
+                    texto += `-------------------------------------------\n`;
+                }
+            });
+
+            if (contadorOcorrencias === 0) {
+                texto += `Nenhum registro de falta ou atividade não realizada encontrado para esta turma no mês de ${nomeMesExtenso}/${ano}.\n\n`;
+                texto += `* Dica: Lembre-se de clicar em "SALVAR REGISTRO DE HOJE" na aba de chamada diária para gravar os dados.`;
+            }
+
+            textareaMensal.value = texto;
+        }
+
+        async function copiarRelacao() {
+            const textarea = document.getElementById("texto-faltas");
+            if (!textarea.value || textarea.value.trim() === "") {
+                mostrarToast("Não há dados para copiar.");
+                return;
+            }
+            copiarTexto(textarea.value, "Relatório diário copiado com sucesso!");
+        }
+
+        async function copiarRelatorioMensal() {
+            const textarea = document.getElementById("texto-mensal");
+            if (!textarea.value || textarea.value.trim() === "") {
+                mostrarToast("Não há dados para copiar.");
+                return;
+            }
+            copiarTexto(textarea.value, "Relatório mensal copiado com sucesso!");
+        }
+
+        async function copiarTexto(texto, mensagemSucesso) {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(texto);
+                } else {
+                    const tempTextArea = document.createElement("textarea");
+                    tempTextArea.value = texto;
+                    document.body.appendChild(tempTextArea);
+                    tempTextArea.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(tempTextArea);
+                }
+                mostrarToast(mensagemSucesso);
+            } catch (err) {
+                mostrarToast("Erro ao copiar o texto.");
             }
         }
-    </script>
 
+        function enviarPorEmail() {
+            const turmaSelect = document.getElementById('turma-select-mensal').value;
+            const mesSelect = document.getElementById('mes-select').value;
+            const textoMensal = document.getElementById('texto-mensal').value;
+
+            if (!textoMensal || textoMensal.trim() === "") {
+                mostrarToast("Gere o relatório mensal antes de enviar por e-mail.");
+                return;
+            }
+
+            const assunto = encodeURIComponent(`Relatório Mensal de Faltas e Atividades - Turma ${turmaSelect} (${mesSelect})`);
+            const corpo = encodeURIComponent(textoMensal);
+
+            const mailtoUrl = `mailto:${EMAIL_DESTINO}?subject=${assunto}&body=${corpo}`;
+            window.location.href = mailtoUrl;
+        }
+
+        function mostrarToast(mensagem) {
+            const toast = document.getElementById("toast");
+            toast.innerText = mensagem;
+            toast.className = "show";
+            setTimeout(function() { 
+                toast.className = toast.className.replace("show", ""); 
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
