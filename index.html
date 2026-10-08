@@ -431,15 +431,10 @@
 
         configurarData();
         renderizarListaAlunos();
-        atualizarCaixaTexto();
 
         document.getElementById('turma-select').addEventListener('change', function() {
             turmaAtual = this.value;
-            faltosos = [];
-            naoRealizados = [];
-            atrapalharam = [];
             renderizarListaAlunos();
-            atualizarCaixaTexto();
         });
 
         function trocarAba(aba) {
@@ -562,6 +557,10 @@
 
                 container.appendChild(row);
             });
+
+            // Recupera registros salvos no localStorage para a turma e data atual
+            carregarRegistroDiario();
+            atualizarCaixaTexto();
         }
 
         function atualizarListas(nome, index, isChecked, tipo) {
@@ -638,7 +637,7 @@
             textarea.value = texto;
         }
 
-        /* SISTEMA DE ARMAZENAMENTO LOCAL */
+        /* SISTEMA DE ARMAZENAMENTO LOCAL (LOCALSTORAGE) */
         function salvarRegistroDiario() {
             const dataHoje = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
             const chave = `registro_${turmaAtual}_${dataHoje}`;
@@ -653,6 +652,48 @@
 
             localStorage.setItem(chave, JSON.stringify(dadosHoje));
             mostrarToast(`Registro do dia (${dataHoje.split('-').reverse().join('/')}) salvo com sucesso!`);
+        }
+
+        function carregarRegistroDiario() {
+            const dataHoje = new Date().toISOString().split('T')[0];
+            const chave = `registro_${turmaAtual}_${dataHoje}`;
+            const dadosSalvos = localStorage.getItem(chave);
+
+            faltosos = [];
+            naoRealizados = [];
+            atrapalharam = [];
+
+            if (dadosSalvos) {
+                try {
+                    const registro = JSON.parse(dadosSalvos);
+                    faltosos = registro.faltosos || [];
+                    naoRealizados = registro.naoRealizados || [];
+                    atrapalharam = registro.atrapalharam || [];
+
+                    const alunos = turmas[turmaAtual];
+                    alunos.forEach((aluno, index) => {
+                        const chkFalta = document.getElementById(`falta-${index}`);
+                        const chkStatus = document.getElementById(`status-${index}`);
+                        const chkAtrapalhou = document.getElementById(`atrapalhou-${index}`);
+
+                        const eFalta = faltosos.some(f => f.nome === aluno);
+                        const eNaoRealizou = naoRealizados.some(n => n.nome === aluno);
+                        const eAtrapalhou = atrapalharam.some(a => a.nome === aluno);
+
+                        if (chkFalta) chkFalta.checked = eFalta;
+                        if (chkStatus) {
+                            chkStatus.checked = eNaoRealizou;
+                            chkStatus.disabled = eFalta;
+                        }
+                        if (chkAtrapalhou) {
+                            chkAtrapalhou.checked = eAtrapalhou;
+                            chkAtrapalhou.disabled = eFalta;
+                        }
+                    });
+                } catch(e) {
+                    console.error("Erro ao carregar os dados do localStorage:", e);
+                }
+            }
         }
 
         /* GERADOR DE RELATÓRIO MENSAL POR ESTUDANTE */
